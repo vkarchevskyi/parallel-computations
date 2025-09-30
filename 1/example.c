@@ -17,7 +17,9 @@ int main()
     int pi2 = min(DEVICES_IN_SECOND_SYSTEM, pi[5], pi[6], pi[7], pi[8]);
     int pi3 = min(DEVICES_IN_THIRD_SYSTEM, pi[9], pi[10], pi[11], pi[12]);
 
-    printf("pi(1) = %d\npi(2) = %d\npi(3) = %d\n", pi1, pi2, pi3);
+    printf("Реальна продуктивність, з якою працюють усі пристрої 1 системи pi(1) = %d\n", pi1);
+    printf("Реальна продуктивність, з якою працюють усі пристрої 2 системи pi(2) = %d\n", pi2);
+    printf("Реальна продуктивність, з якою працюють усі пристрої 3 системи pi(3) = %d\n", pi3);
 
     double p[] = {
         (double)pi1 / pi[0],
@@ -39,7 +41,7 @@ int main()
 
     for (int i = 0; i < DEVICES_SUM; i++)
     {
-        printf("p(%d) = %f\n", i, p[i]);
+        printf("Завантаженість пристрою %2d p(%d) = %f\n", i, i, p[i]);
     }
 
     int r1 = DEVICES_IN_FIRST_SYSTEM * pi1;
@@ -47,19 +49,22 @@ int main()
     int r3 = DEVICES_IN_THIRD_SYSTEM * pi3;
     int r = r1 + r2 + r3;
 
-    printf("r1 = %d\nr2 = %d\nr3 = %d\nr = %d\n", r1, r2, r3, r);
+    printf("Реальна продуктивність підсистеми 1 r1 = %d\n", r1);
+    printf("Реальна продуктивність підсистеми 2 r2 = %d\n", r2);
+    printf("Реальна продуктивність підсистеми 3 r3 = %d\n", r3);
+    printf("Реальна продуктивність системи r = %d\n", r);
 
     int sumPi = getSumPi(pi, DEVICES_SUM);
-    printf("Highest pi = %d\n", sumPi);
+    printf("Пікова продуктивність системи pi = %d\n", sumPi);
 
     double load = (double)r / sumPi;
-    printf("p = %f\n", load);
+    printf("Завантаженість системи = %f\n", load);
 
     int maxPi = getMaxPi(pi, DEVICES_SUM);
-    printf("max pi = %d\n", maxPi);
+    printf("Максимальна реальна продуктивність пристрою = %d\n", maxPi);
 
     double S = (double)r / maxPi;
-    printf("S = %f\n", S);
+    printf("Прискорення системи S = %f\n", S);
 }
 
 int min(int n, ...)
