@@ -5,7 +5,7 @@
 
 using namespace std;
 
-double norm_1(double **matrix, int m, int n)
+double norm_inf(double **matrix, int m, int n)
 {
     double norm = -1;
     for (int i = 0; i < m; i++)
@@ -23,7 +23,7 @@ double norm_1(double **matrix, int m, int n)
     return norm;
 }
 
-double norm_1_parallel(double **matrix, int m, int n, int thread_count)
+double norm_inf_parallel(double **matrix, int m, int n, int thread_count)
 {
     double norm = -1;
 
@@ -71,7 +71,7 @@ int main()
         int m = dims[d], n = dims[d];
 
         double start = omp_get_wtime();
-        double norm = norm_1(matrix, m, n);
+        double norm = norm_inf(matrix, m, n);
 
         double duration = omp_get_wtime() - start;
         cout << "Dimension: " << m << '\n';
@@ -79,7 +79,7 @@ int main()
         for (int t = 0; t < THREADS_COUNT; t++)
         {
             start = omp_get_wtime();
-            norm = norm_1_parallel(matrix, m, n, threads[t]);
+            norm = norm_inf_parallel(matrix, m, n, threads[t]);
             double speedup = duration / (omp_get_wtime() - start);
             printf("\tFor %d threads ||A||_INF = %e;speedup is % e\n ", threads[t], norm, speedup);
             fs << speedup << '\t';
