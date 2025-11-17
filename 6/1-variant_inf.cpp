@@ -75,13 +75,13 @@ int main()
 
         double duration = omp_get_wtime() - start;
         cout << "Dimension: " << m << '\n';
-        printf("\tIn serial mode ||A||_1 = %e; duration is %e\n ", norm, duration);
+        printf("\tIn serial mode ||A||_INF = %e; duration is %e\n ", norm, duration);
         for (int t = 0; t < THREADS_COUNT; t++)
         {
             start = omp_get_wtime();
             norm = norm_1_parallel(matrix, m, n, threads[t]);
             double speedup = duration / (omp_get_wtime() - start);
-            printf("\tFor %d threads ||A|| 1 = %e;speedup is % e\n ", threads[t], norm, speedup);
+            printf("\tFor %d threads ||A||_INF = %e;speedup is % e\n ", threads[t], norm, speedup);
             fs << speedup << '\t';
         }
         fs << '\n';
