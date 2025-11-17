@@ -22,7 +22,7 @@ double norm_frobenius_parallel(double **matrix, int m, int n, int thread_count)
 {
     double norm = 0;
     // Semerenko p. 56-57
-#pragma omp parallel for num_threads(thread_count) reduction(+:norm)
+#pragma omp parallel for num_threads(thread_count) reduction(+ : norm)
     for (int i = 0; i < m; i++)
     {
         for (int j = 0; j < n; j++)
@@ -53,7 +53,7 @@ int main()
         }
     }
 
-    fstream fs = fstream("result-frobenius.txt", ios::out);
+    fstream fs = fstream("result-frobeni.txt", ios::out);
     for (int d = 0; d < DIM_COUNT; d++)
     {
         int m = dims[d], n = dims[d];
@@ -63,13 +63,13 @@ int main()
 
         double duration = omp_get_wtime() - start;
         cout << "Dimension: " << m << '\n';
-        printf("\tIn serial mode ||A||_F = %e; duration is %e\n ", norm, duration);
+        printf("\tIn serial mode ||A||_F = %f; duration is %f\n ", norm, duration);
         for (int t = 0; t < THREADS_COUNT; t++)
         {
             start = omp_get_wtime();
             norm = norm_frobenius_parallel(matrix, m, n, threads[t]);
             double speedup = duration / (omp_get_wtime() - start);
-            printf("\tFor %d threads ||A||_F = %e; speedup is % e\n ", threads[t], norm, speedup);
+            printf("\tFor %d threads ||A||_F = %f; speedup is %f\n ", threads[t], norm, speedup);
             fs << speedup << '\t';
         }
         fs << '\n';
