@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <time.h>
 
-#define M 4  // кількість рядків (і потоків)
+#define M 4  // кількість рядків
 #define N 6  // кількість стовпців
 
 int main() {
@@ -13,10 +13,8 @@ int main() {
     omp_lock_t lock;
     FILE *file;
 
-    // Ініціалізація генератора випадкових чисел
     srand(time(NULL));
 
-    // Створення матриці з випадковими елементами
     printf("Матриця A (%dx%d):\n", M, N);
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
@@ -27,24 +25,20 @@ int main() {
     }
     printf("\n");
 
-    // Ініціалізація замка
     omp_init_lock(&lock);
 
-    // Відкриття файлу для запису
     file = fopen("results.txt", "w");
     if (file == NULL) {
         printf("Помилка відкриття файлу!\n");
         return 1;
     }
 
-    // Встановлення кількості потоків
     omp_set_num_threads(M);
 
     #pragma omp parallel
     {
         int thread_id = omp_get_thread_num();
 
-        // Виведення інформації одним потоком (директива single)
         #pragma omp single
         {
             printf("=== Інформація про лабораторну роботу ===\n");
@@ -66,7 +60,6 @@ int main() {
             fprintf(file, "==========================================\n\n");
         }
 
-        // Кожен потік обробляє свій рядок - знаходить мінімум
         int min_val = INT_MAX;
         for (int j = 0; j < N; j++) {
             if (A[thread_id][j] < min_val) {
@@ -75,7 +68,6 @@ int main() {
         }
         min_values[thread_id] = min_val;
 
-        // Блокування для виведення результатів у файл
         omp_set_lock(&lock);
         fprintf(file, "Потік %d: Мінімум рядка %d = %d\n", thread_id, thread_id, min_val);
         printf("Потік %d: Мінімум рядка %d = %d\n", thread_id, thread_id, min_val);
@@ -83,15 +75,13 @@ int main() {
 
         #pragma omp barrier
 
-        // Частина 4: Почергове виведення з перевіркою блокування
         int entered = 0;
         while (!entered) {
             if (omp_test_lock(&lock)) {
                 fprintf(file, "Потік %d: Початок закритої секції...\n", thread_id);
                 printf("Потік %d: Початок закритої секції...\n", thread_id);
 
-                // Імітація роботи в закритій секції
-                for (volatile int k = 0; k < 100000; k++);
+                for (volatile int k = 0; k < 100000; k++); // Імітація роботи
 
                 fprintf(file, "Потік %d: Кінець закритої секції...\n", thread_id);
                 printf("Потік %d: Кінець закритої секції...\n", thread_id);
@@ -99,23 +89,17 @@ int main() {
                 omp_unset_lock(&lock);
                 entered = 1;
             } else {
-                // Невдала спроба увійти до закритої секції
-                // Використовуємо інший замок для запису повідомлення про невдалу спробу
                 #pragma omp critical
                 {
                     fprintf(file, "Потік %d: Невдала спроба увійти до закритої секції\n", thread_id);
                     printf("Потік %d: Невдала спроба увійти до закритої секції\n", thread_id);
                 }
-                // Невелика затримка перед повторною спробою
-                for (int k = 0; k < 50000; k++);
+                for (int k = 0; k < 50000; k++); // Невелика затримка
             }
         }
     }
 
-    // Знищення замка
     omp_destroy_lock(&lock);
-
-    // Закриття файлу
     fclose(file);
 
     printf("\nРезультати записано у файл results.txt\n");
